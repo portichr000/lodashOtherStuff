@@ -2,35 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Error management in JavaScript</title>
+    <title>More error managment in JS</title>
 </head>
 <body>
-    hi there
+    
 </body>
 
 <script>
-    class DevcampError extends Error {
-      constructor(msg = 'An error occurred', ...params) {
+    class ApiError extends Error {
+      constructor(msg = 'An api error occurred', ...params) {
         super(...params);
-
         this.msg = msg;
       }
     }
 
 
-    function siteComponent(func) {
-      return func();
+    var request = new XMLHttpRequest();
+
+    request.open('GET', 'http://api.dailysmarty.com/posts', true);
+
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            var data = JSON.parse(request.responseText);
+            console.log(data);
+        } else {
+            throw new ApiError('ApiError', `An API error occurred with a status code of ${request.status}`);
+        }
     }
 
-    try {
-      console.log(siteComponent('oops'));
-    } catch(e) {
-      throw new DevcampError('DevcampError', e);
-    }
-
-    widget = () => {
-      return '<div>Hi there</div>';
-    }
-
+    request.send();
 </script>
 </html>
